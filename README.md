@@ -10,6 +10,15 @@ A modern weather application built with React, TypeScript, and Vite, powered by 
 - Responsive design for all devices
 - Real-time weather data from Weatherstack API
 
+## Important: API Rate Limits
+
+**Weatherstack Free Tier:** 1,000 requests per month
+
+If you encounter a "Rate limit exceeded" error (HTTP 429), you have reached your monthly limit. Options:
+1. Wait until next month for the limit to reset
+2. Upgrade to a paid Weatherstack plan
+3. Switch to OpenWeatherMap API (1,000 requests per day free tier)
+
 ## Setup
 
 1. Clone the repository

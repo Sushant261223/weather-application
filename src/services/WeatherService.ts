@@ -57,6 +57,10 @@ export class WeatherService {
       
       const response = await fetch(url)
 
+      if (response.status === 429) {
+        throw new Error('Rate limit exceeded. Weatherstack free tier allows 1,000 requests/month. Please wait or upgrade your plan.')
+      }
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
@@ -66,6 +70,9 @@ export class WeatherService {
       
       if (data.error) {
         console.error('API Error:', data.error)
+        if (data.error.code === 104) {
+          throw new Error('Monthly API request limit reached. Weatherstack free tier: 1,000 requests/month.')
+        }
         throw new Error(data.error.info || 'Failed to fetch weather data')
       }
       

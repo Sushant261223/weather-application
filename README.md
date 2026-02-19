@@ -1,13 +1,14 @@
 # Weather Application
 
-A modern weather application built with React, TypeScript, and Vite.
+A modern weather application built with React, TypeScript, and Vite, powered by Weatherstack API.
 
 ## Features
 
 - Search for locations worldwide
 - View current weather conditions
+- Weather history view (requires premium API plan)
 - Responsive design for all devices
-- Real-time weather data from OpenWeatherMap API
+- Real-time weather data from Weatherstack API
 
 ## Setup
 
@@ -17,7 +18,7 @@ A modern weather application built with React, TypeScript, and Vite.
    npm install
    ```
 
-3. Create a `.env` file and add your OpenWeatherMap API key:
+3. Create a `.env` file and add your Weatherstack API key:
    ```
    VITE_WEATHER_API_KEY=your_api_key_here
    ```
@@ -41,4 +42,4 @@ This app is configured for easy deployment to Vercel. Make sure to add your `VIT
 
 ## API Key
 
-Get your free API key from [OpenWeatherMap](https://openweathermap.org/api).
+Get your free API key from [Weatherstack](https://weatherstack.com/).

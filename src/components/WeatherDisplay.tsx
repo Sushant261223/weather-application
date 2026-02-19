@@ -50,7 +50,7 @@ function WeatherDisplay({ location }: WeatherDisplayProps) {
       <div className="weather-main">
         {weather.icon && (
           <img
-            src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
+            src={weather.icon}
             alt={weather.conditions}
             className="weather-icon"
           />

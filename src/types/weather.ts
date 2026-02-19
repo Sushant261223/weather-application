@@ -22,3 +22,34 @@ export interface AppError {
   code?: string
   retryable: boolean
 }
+
+export interface WeatherHistoryEntry {
+  date: string
+  temperature: number
+  humidity: number
+  windSpeed: number
+  conditions: string
+}
+
+export interface APIConfig {
+  apiKey: string
+  baseUrl?: string
+}
+
+export interface DateRange {
+  startDate: string
+  endDate: string
+}
+
+export interface AdditionalWeatherData {
+  uvIndex?: number
+  airQuality?: number
+  precipitation?: number
+}
+
+export interface ForecastData {
+  date: string
+  temperature: number
+  conditions: string
+  icon?: string
+}

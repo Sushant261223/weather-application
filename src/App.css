@@ -6,12 +6,44 @@
 
 .app-header {
   margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .app-header h1 {
   font-size: 2.5rem;
   color: #646cff;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
+}
+
+.unit-toggle {
+  display: flex;
+  gap: 0.5rem;
+  background-color: #1a1a1a;
+  padding: 0.25rem;
+  border-radius: 8px;
+  border: 2px solid #646cff;
+}
+
+.unit-toggle button {
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.unit-toggle button.active {
+  background-color: #646cff;
+}
+
+.unit-toggle button:hover:not(.active) {
+  background-color: #2a2a2a;
 }
 
 .app-main {
@@ -21,12 +53,53 @@
   align-items: center;
 }
 
+.view-tabs {
+  display: flex;
+  gap: 0.5rem;
+  background-color: #1a1a1a;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 2px solid #646cff;
+}
+
+.tab {
+  padding: 0.75rem 1.5rem;
+  background-color: transparent;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 1rem;
+}
+
+.tab.active {
+  background-color: #646cff;
+}
+
+.tab:hover:not(.active) {
+  background-color: #2a2a2a;
+}
+
 @media (max-width: 768px) {
   .app {
     padding: 1rem;
   }
   
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
   .app-header h1 {
     font-size: 2rem;
+  }
+
+  .view-tabs {
+    width: 100%;
+  }
+
+  .tab {
+    flex: 1;
   }
 }

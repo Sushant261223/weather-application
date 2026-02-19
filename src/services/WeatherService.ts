@@ -1,9 +1,15 @@
-import { CurrentWeather, Location } from '../types/weather'
+import { CurrentWeather, Location, APIConfig, WeatherHistoryEntry, DateRange, AdditionalWeatherData } from '../types/weather'
 
-const API_KEY = import.meta.env.VITE_WEATHER_API_KEY || 'demo'
-const BASE_URL = 'https://api.openweathermap.org/data/2.5'
+const DEFAULT_BASE_URL = 'https://api.openweathermap.org/data/2.5'
 
 export class WeatherService {
+  private apiKey: string
+  private baseUrl: string
+
+  constructor(config?: APIConfig) {
+    this.apiKey = config?.apiKey || import.meta.env.VITE_WEATHER_API_KEY || 'demo'
+    this.baseUrl = config?.baseUrl || DEFAULT_BASE_URL
+  }
   async searchLocations(query: string): Promise<Location[]> {
     if (!query.trim()) {
       return []
@@ -11,7 +17,7 @@ export class WeatherService {
 
     try {
       const response = await fetch(
-        `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=5&appid=${API_KEY}`
+        `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=5&appid=${this.apiKey}`
       )
       
       if (!response.ok) {
@@ -34,7 +40,7 @@ export class WeatherService {
   async getCurrentWeather(location: string): Promise<CurrentWeather> {
     try {
       const response = await fetch(
-        `${BASE_URL}/weather?q=${encodeURIComponent(location)}&units=metric&appid=${API_KEY}`
+        `${this.baseUrl}/weather?q=${encodeURIComponent(location)}&units=metric&appid=${this.apiKey}`
       )
 
       if (!response.ok) {
@@ -56,6 +62,40 @@ export class WeatherService {
       }
     } catch (error) {
       throw new Error('Unable to fetch weather data. Please try again.')
+    }
+  }
+
+  async getWeatherHistory(location: string, dateRange: DateRange): Promise<WeatherHistoryEntry[]> {
+    // Note: OpenWeatherMap free tier doesn't support historical data
+    // This is a placeholder implementation
+    try {
+      // In a real implementation, you would call a historical weather API
+      console.warn('Historical weather data not available in free tier')
+      return []
+    } catch (error) {
+      throw new Error('Unable to fetch weather history.')
+    }
+  }
+
+  async getAdditionalFeatures(location: string): Promise<AdditionalWeatherData> {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/weather?q=${encodeURIComponent(location)}&units=metric&appid=${this.apiKey}`
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch additional weather data')
+      }
+
+      const data = await response.json()
+      
+      return {
+        uvIndex: data.uvi,
+        precipitation: data.rain?.['1h'] || data.snow?.['1h'],
+      }
+    } catch (error) {
+      console.error('Additional features error:', error)
+      return {}
     }
   }
 }

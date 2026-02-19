@@ -1,6 +1,6 @@
 import { CurrentWeather, Location, APIConfig, WeatherHistoryEntry, DateRange, AdditionalWeatherData } from '../types/weather'
 
-const DEFAULT_BASE_URL = 'http://api.weatherstack.com'
+const DEFAULT_BASE_URL = 'https://api.weatherstack.com'
 
 export class WeatherService {
   private apiKey: string
@@ -52,18 +52,25 @@ export class WeatherService {
 
   async getCurrentWeather(location: string): Promise<CurrentWeather> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/current?access_key=${this.apiKey}&query=${encodeURIComponent(location)}&units=m`
-      )
+      const url = `${this.baseUrl}/current?access_key=${this.apiKey}&query=${encodeURIComponent(location)}&units=m`
+      console.log('Fetching weather from:', url.replace(this.apiKey, 'API_KEY'))
+      
+      const response = await fetch(url)
 
       if (!response.ok) {
-        throw new Error('Failed to fetch weather data')
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
 
       const data = await response.json()
+      console.log('Weather API response:', data)
       
       if (data.error) {
+        console.error('API Error:', data.error)
         throw new Error(data.error.info || 'Failed to fetch weather data')
+      }
+      
+      if (!data.current || !data.location) {
+        throw new Error('Invalid response from weather API')
       }
       
       return {
@@ -78,7 +85,8 @@ export class WeatherService {
         visibility: data.current.visibility,
       }
     } catch (error) {
-      throw new Error('Unable to fetch weather data. Please try again.')
+      console.error('Weather fetch error:', error)
+      throw new Error(error instanceof Error ? error.message : 'Unable to fetch weather data. Please try again.')
     }
   }
 

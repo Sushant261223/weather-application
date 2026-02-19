@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { weatherService } from '../services/WeatherService'
 import { CurrentWeather } from '../types/weather'
+import SkeletonLoader from './SkeletonLoader'
+import WeatherBackground from './WeatherBackground'
 import './WeatherDisplay.css'
 
 interface WeatherDisplayProps {
@@ -32,7 +34,7 @@ function WeatherDisplay({ location }: WeatherDisplayProps) {
   }, [location])
 
   if (loading) {
-    return <div className="weather-display loading">Loading weather data...</div>
+    return <SkeletonLoader type="weather" />
   }
 
   if (error) {
@@ -44,42 +46,45 @@ function WeatherDisplay({ location }: WeatherDisplayProps) {
   }
 
   return (
-    <div className="weather-display">
-      <h2 className="weather-location">{weather.location}</h2>
-      
-      <div className="weather-main">
-        {weather.icon && (
-          <img
-            src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
-            alt={weather.conditions}
-            className="weather-icon"
-          />
-        )}
-        <div className="weather-temp">{weather.temperature}°C</div>
-        <div className="weather-conditions">{weather.conditions}</div>
-      </div>
+    <>
+      <WeatherBackground condition={weather.conditions} />
+      <div className="weather-display">
+        <h2 className="weather-location">{weather.location}</h2>
+        
+        <div className="weather-main">
+          {weather.icon && (
+            <img
+              src={`https://openweathermap.org/img/wn/${weather.icon}@4x.png`}
+              alt={weather.conditions}
+              className="weather-icon animated-icon"
+            />
+          )}
+          <div className="weather-temp">{weather.temperature}°C</div>
+          <div className="weather-conditions">{weather.conditions}</div>
+        </div>
 
-      <div className="weather-details">
-        <div className="weather-detail">
-          <span className="detail-label">Feels Like</span>
-          <span className="detail-value">{weather.feelsLike}°C</span>
-        </div>
-        <div className="weather-detail">
-          <span className="detail-label">Humidity</span>
-          <span className="detail-value">{weather.humidity}%</span>
-        </div>
-        <div className="weather-detail">
-          <span className="detail-label">Wind Speed</span>
-          <span className="detail-value">{weather.windSpeed} m/s</span>
-        </div>
-        {weather.pressure && (
+        <div className="weather-details">
           <div className="weather-detail">
-            <span className="detail-label">Pressure</span>
-            <span className="detail-value">{weather.pressure} hPa</span>
+            <span className="detail-label">Feels Like</span>
+            <span className="detail-value">{weather.feelsLike}°C</span>
           </div>
-        )}
+          <div className="weather-detail">
+            <span className="detail-label">Humidity</span>
+            <span className="detail-value">{weather.humidity}%</span>
+          </div>
+          <div className="weather-detail">
+            <span className="detail-label">Wind Speed</span>
+            <span className="detail-value">{weather.windSpeed} m/s</span>
+          </div>
+          {weather.pressure && (
+            <div className="weather-detail">
+              <span className="detail-label">Pressure</span>
+              <span className="detail-value">{weather.pressure} hPa</span>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

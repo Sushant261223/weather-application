@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { weatherService } from '../services/WeatherService'
 import { WeatherHistoryEntry, DateRange, AppError } from '../types/weather'
 import { validateDateRange } from '../utils/validation'
-import LoadingIndicator from './LoadingIndicator'
+import SkeletonLoader from './SkeletonLoader'
 import ErrorDisplay from './ErrorDisplay'
 import './HistoryView.css'
 
@@ -51,7 +51,7 @@ function HistoryView({ location }: HistoryViewProps) {
   }, [location])
 
   if (loading) {
-    return <LoadingIndicator message="Loading weather history..." />
+    return <SkeletonLoader type="weather" />
   }
 
   return (

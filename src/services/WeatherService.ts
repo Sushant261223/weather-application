@@ -1,6 +1,6 @@
 import { CurrentWeather, Location, APIConfig, WeatherHistoryEntry, DateRange, AdditionalWeatherData } from '../types/weather'
 
-const DEFAULT_BASE_URL = 'https://api.weatherstack.com'
+const DEFAULT_BASE_URL = 'https://api.openweathermap.org/data/2.5'
 
 export class WeatherService {
   private apiKey: string
@@ -17,10 +17,8 @@ export class WeatherService {
     }
 
     try {
-      // Weatherstack doesn't have a separate search endpoint
-      // We'll return a single result based on the query
       const response = await fetch(
-        `${this.baseUrl}/current?access_key=${this.apiKey}&query=${encodeURIComponent(query)}`
+        `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=5&appid=${this.apiKey}`
       )
       
       if (!response.ok) {
@@ -28,22 +26,12 @@ export class WeatherService {
       }
 
       const data = await response.json()
-      
-      if (data.error) {
-        console.error('Location search error:', data.error)
-        return []
-      }
-
-      if (data.location) {
-        return [{
-          name: data.location.name,
-          country: data.location.country,
-          lat: parseFloat(data.location.lat),
-          lon: parseFloat(data.location.lon),
-        }]
-      }
-      
-      return []
+      return data.map((item: any) => ({
+        name: item.name,
+        country: item.country,
+        lat: item.lat,
+        lon: item.lon,
+      }))
     } catch (error) {
       console.error('Location search error:', error)
       return []
@@ -52,44 +40,33 @@ export class WeatherService {
 
   async getCurrentWeather(location: string): Promise<CurrentWeather> {
     try {
-      const url = `${this.baseUrl}/current?access_key=${this.apiKey}&query=${encodeURIComponent(location)}&units=m`
+      const url = `${this.baseUrl}/weather?q=${encodeURIComponent(location)}&units=metric&appid=${this.apiKey}`
       console.log('Fetching weather from:', url.replace(this.apiKey, 'API_KEY'))
       
       const response = await fetch(url)
 
       if (response.status === 429) {
-        throw new Error('Rate limit exceeded. Weatherstack free tier allows 1,000 requests/month. Please wait or upgrade your plan.')
+        throw new Error('Rate limit exceeded. Please wait a moment and try again.')
       }
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
       }
 
       const data = await response.json()
       console.log('Weather API response:', data)
       
-      if (data.error) {
-        console.error('API Error:', data.error)
-        if (data.error.code === 104) {
-          throw new Error('Monthly API request limit reached. Weatherstack free tier: 1,000 requests/month.')
-        }
-        throw new Error(data.error.info || 'Failed to fetch weather data')
-      }
-      
-      if (!data.current || !data.location) {
-        throw new Error('Invalid response from weather API')
-      }
-      
       return {
-        location: data.location.name,
-        temperature: data.current.temperature,
-        humidity: data.current.humidity,
-        windSpeed: data.current.wind_speed,
-        conditions: data.current.weather_descriptions[0],
-        icon: data.current.weather_icons[0],
-        feelsLike: data.current.feelslike,
-        pressure: data.current.pressure,
-        visibility: data.current.visibility,
+        location: data.name,
+        temperature: Math.round(data.main.temp),
+        humidity: data.main.humidity,
+        windSpeed: data.wind.speed,
+        conditions: data.weather[0].description,
+        icon: data.weather[0].icon,
+        feelsLike: Math.round(data.main.feels_like),
+        pressure: data.main.pressure,
+        visibility: data.visibility,
       }
     } catch (error) {
       console.error('Weather fetch error:', error)
@@ -98,11 +75,10 @@ export class WeatherService {
   }
 
   async getWeatherHistory(location: string, dateRange: DateRange): Promise<WeatherHistoryEntry[]> {
-    // Note: Weatherstack historical data requires premium plan
+    // Note: OpenWeatherMap historical data requires paid plan
     // This is a placeholder implementation
     try {
-      console.warn('Historical weather data requires premium plan')
-      // Suppress unused parameter warnings
+      console.warn('Historical weather data requires paid plan')
       void location
       void dateRange
       return []
@@ -114,7 +90,7 @@ export class WeatherService {
   async getAdditionalFeatures(location: string): Promise<AdditionalWeatherData> {
     try {
       const response = await fetch(
-        `${this.baseUrl}/current?access_key=${this.apiKey}&query=${encodeURIComponent(location)}&units=m`
+        `${this.baseUrl}/weather?q=${encodeURIComponent(location)}&units=metric&appid=${this.apiKey}`
       )
 
       if (!response.ok) {
@@ -123,13 +99,9 @@ export class WeatherService {
 
       const data = await response.json()
       
-      if (data.error) {
-        return {}
-      }
-      
       return {
-        uvIndex: data.current.uv_index,
-        precipitation: data.current.precip,
+        uvIndex: data.uvi,
+        precipitation: data.rain?.['1h'] || data.snow?.['1h'],
       }
     } catch (error) {
       console.error('Additional features error:', error)

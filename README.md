@@ -1,6 +1,6 @@
 # Weather Application
 
-A modern weather application built with React, TypeScript, and Vite, powered by Weatherstack API.
+A modern weather application built with React, TypeScript, and Vite, powered by OpenWeatherMap API.
 
 ## Features
 
@@ -8,16 +8,13 @@ A modern weather application built with React, TypeScript, and Vite, powered by 
 - View current weather conditions
 - Weather history view (requires premium API plan)
 - Responsive design for all devices
-- Real-time weather data from Weatherstack API
+- Real-time weather data from OpenWeatherMap API
 
-## Important: API Rate Limits
+## API Rate Limits
 
-**Weatherstack Free Tier:** 1,000 requests per month
+**OpenWeatherMap Free Tier:** 1,000 requests per day (60 requests per minute)
 
-If you encounter a "Rate limit exceeded" error (HTTP 429), you have reached your monthly limit. Options:
-1. Wait until next month for the limit to reset
-2. Upgrade to a paid Weatherstack plan
-3. Switch to OpenWeatherMap API (1,000 requests per day free tier)
+Much more generous than other weather APIs!
 
 ## Setup
 
@@ -27,7 +24,7 @@ If you encounter a "Rate limit exceeded" error (HTTP 429), you have reached your
    npm install
    ```
 
-3. Create a `.env` file and add your Weatherstack API key:
+3. Create a `.env` file and add your OpenWeatherMap API key:
    ```
    VITE_WEATHER_API_KEY=your_api_key_here
    ```
@@ -51,4 +48,4 @@ This app is configured for easy deployment to Vercel. Make sure to add your `VIT
 
 ## API Key
 
-Get your free API key from [Weatherstack](https://weatherstack.com/).
+Get your free API key from [OpenWeatherMap](https://openweathermap.org/api).
